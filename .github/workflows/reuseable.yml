@@ -7,8 +7,18 @@ on:
         description: "Name of the artifact to download"
         required: true
         type: string
+    outputs:
+      result:
+        description: "Status of the deployment"
+        value: ${{ jobs.deploy.outputs.status }}
+    secrets:
+      GITHUB_TOKEN:
+        required: false
+        type: string
 jobs:
   deploy:
+    outputs:
+      status: ${{ steps.deploy.outputs.status }}
     runs-on: ubuntu-latest
     steps:
       - name: Get build artifacts
@@ -19,3 +29,6 @@ jobs:
         run: ls
       - name: Output contents
         run: echo "Deploying..."
+      - name: Set result output
+        id: deploy
+        run: echo "status=success" >> $GITHUB_OUTPUT
